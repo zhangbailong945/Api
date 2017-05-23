@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * 笔记的业务逻辑
  */
@@ -11,9 +12,33 @@ class Domain_Articles{
 	    */
        public function getArticlesTen()
        {
+
        	  $list=array();
           $model=new Model_Articles();
           $list=$model->getArticlesTen();
           return $list;
+       }
+       
+       /**
+        * 获取所有笔记并分页
+        * @param $offset
+        * @param $num
+        */
+       public function getAllArticles($offset,$num)
+       {
+          $list=array();
+          $model=new Model_Articles();
+          $list=$model->getAllArticles($offset,$num);
+          return $list;
+       }
+       
+       /**
+        * 获取所有笔记的总数
+        */
+       public function getAllArticlesCount()
+       {
+         $model=new Model_Articles();
+         $count=$model->getAllArticlesCount();
+         return $count;
        }
 }

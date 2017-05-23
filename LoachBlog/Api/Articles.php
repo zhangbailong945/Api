@@ -18,6 +18,9 @@ class Api_Articles extends PhalApi_Api{
              'getArticlesTen'=>array(
          
              ),
+             'getAllArticles'=>array(
+                'pageNum'=>array('name'=>'pageNum','type'=>'int','min'=>1,'require'=>true),
+             ),
          );
     }
     
@@ -31,7 +34,7 @@ class Api_Articles extends PhalApi_Api{
        $list=$domain->getArticlesTen();
        if(empty($list))
        {
-          DI()->logger->debug('user not found');
+          DI()->logger->debug('没有数据');
           $rs['code']=1;
           $rs['msg']=T('系统正在更新....');
           return $rs;
@@ -39,5 +42,43 @@ class Api_Articles extends PhalApi_Api{
        $rs['list']=$list;
        return $rs;
     }
+    
+    /**
+     * 获取所有的笔记并分页
+     */
+    public function getAllArticles()
+    {
+       $offset=0; //偏移量
+       $num=10; //每页显示10条数据
+       $rs=array('code'=>0,'msg'=>'已经为您拉取到第'.$this->pageNum.'页的所有笔记。','list'=>array());
+       $domain=new Domain_Articles();
+       //获取笔记总数
+       $count=$domain->getAllArticlesCount();
+       if($count==0)
+       {
+          DI()->logger->debug('没有获取到笔记总数。');
+          $rs['code']=1;
+          $rs['msg']=T('系统正在更新....');
+          return $rs;
+       }
+       
+       //根据笔记总数和每页显示数，得出分页总数（笔记总数/每页显示条数,有余数就进一）
+       $allPageNum=ceil($count/$num);
+       //客户的提供的页码数
+       $clientPageNum=$this->pageNum;
+  
+       if($clientPageNum>$allPageNum||$clientPageNum<=0)
+       {
+          DI()->logger->debug('客户的页码数过大或者小于0。');
+          $rs['code']=1;
+          $rs['msg']=T('pageNum必须在1-'.$allPageNum.'之间!');
+          return $rs;
+       }
+       //求出页码的偏移量
+       $offset=($clientPageNum-1)*$num;
+       $rs['list']=$domain->getAllArticles($offset,$num);
+       return $rs;
+    }
+    
 
 }
