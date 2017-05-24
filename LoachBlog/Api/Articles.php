@@ -5,27 +5,26 @@
  */
 class Api_Articles extends PhalApi_Api{
 
-	/**
-	 * 编写规则
-	 * @see PhalApi/PhalApi_Api::getRules()
-	 */
+
     public function getRules()
     {
          return  array(
-             /**
-              * 获取最新的10条笔记
-              */
-             'getArticlesTen'=>array(
-         
-             ),
+
+              //获取最新的10条笔记
+             'getArticlesTen'=>array(),
+             // 获取所有笔记并分页
              'getAllArticles'=>array(
                 'pageNum'=>array('name'=>'pageNum','type'=>'int','min'=>1,'require'=>true),
              ),
+             //获取笔记分类和相关笔记总数
+             'getArticlesCategory'=>array(),
+             
          );
     }
     
     /**
      * 获取10条最新的笔记
+     * @desc 按时间排序获取最新的10条笔记
      */
     public function getArticlesTen()
     {
@@ -45,6 +44,7 @@ class Api_Articles extends PhalApi_Api{
     
     /**
      * 获取所有的笔记并分页
+     * @desc 获取所有的笔记并分页
      */
     public function getAllArticles()
     {
@@ -78,6 +78,25 @@ class Api_Articles extends PhalApi_Api{
        $offset=($clientPageNum-1)*$num;
        $rs['list']=$domain->getAllArticles($offset,$num);
        return $rs;
+    }
+    
+    /**
+     * 获取笔记的分类
+     * @desc 获取笔记的分类和相关分类的笔记总数
+     */
+    public function getArticlesCategory()
+    {
+       $rs=array('code'=>0,'msg'=>'','list'=>array());
+       $domain=new Domain_Articles();
+       $list=$domain->getArticlesCategory();
+       if(empty($list))
+       {
+          $rs['code']=1;
+          $rs['msg']='暂时没有数据！';
+       }
+       $rs['list']=$list;
+       return $rs;
+       
     }
     
 

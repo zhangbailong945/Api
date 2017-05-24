@@ -41,4 +41,14 @@ class Domain_Articles{
          $count=$model->getAllArticlesCount();
          return $count;
        }
+       
+       /**
+        * 获取笔记分类和分类的总数
+        */
+       public function getArticlesCategory()
+       {
+         $model=new Model_Articles();
+         $list=$model->getArticlesCategory();
+         return $list;
+       }
 }
